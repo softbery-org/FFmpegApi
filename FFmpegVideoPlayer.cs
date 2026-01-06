@@ -1,4 +1,4 @@
-// Version: 0.0.2.93
+// Version: 0.0.2.96
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -132,11 +132,7 @@ public unsafe class FFmpegVideoPlayer : IDisposable, INotifyPropertyChanged
         _seekTarget = pos;
         _seeking = true;
 
-        _waveOut.Stop();
-        _audioBuffer.ClearBuffer();
-
-        ffmpeg.avcodec_flush_buffers(_audioCtx);
-        ffmpeg.avcodec_flush_buffers(_videoCtx);
+        
     }
 
     public void Dispose()
@@ -381,6 +377,7 @@ public unsafe class FFmpegVideoPlayer : IDisposable, INotifyPropertyChanged
 
             if (_seeking)
             {
+                _waveOut.Stop();
                 // Oblicz target PTS
                 videoPts = _seekTarget.TotalSeconds /
                                         ffmpeg.av_q2d(_fmt->streams[_videoStream]->time_base);
@@ -477,6 +474,12 @@ public unsafe class FFmpegVideoPlayer : IDisposable, INotifyPropertyChanged
             {
                 ffmpeg.av_frame_unref(_audioFrame);
                 return;
+            }
+
+            if (_seeking) 
+            {
+                _waveOut.Stop();
+                _audioBuffer.ClearBuffer();
             }
 
             int outSamples = ffmpeg.swr_get_out_samples(_swr, _audioFrame->nb_samples);

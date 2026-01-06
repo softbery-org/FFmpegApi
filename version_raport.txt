@@ -1,8 +1,16 @@
-F:\dev\T\FFmpegApi\FFmpegVideoPlayer.cs -> 0.0.2.93
+F:\dev\T\FFmpegApi\Views\ProgressbarView.xaml.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\VideoPlayer.g.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\VideoPlayer.g.i.cs -> 0.0.0.1
+F:\dev\T\FFmpegApi\Views\Effects\BeatsEffect.xaml.cs -> 0.1.1.29
+F:\dev\T\FFmpegApi\Views\Effects\DragShadowAdorner.cs -> 0.1.0.30
+F:\dev\T\FFmpegApi\Views\Effects\IEffect.cs -> 0.1.0.99
+F:\dev\T\FFmpegApi\Views\Effects\ScrollIndicatorAdorner.cs -> 0.1.0.29
+F:\dev\T\FFmpegApi\obj\Debug\Effects\BeatsEffect.g.i.cs -> 0.0.0.1
+F:\dev\T\FFmpegApi\obj\Debug\Views\ProgressbarView.g.i.cs -> 0.0.0.1
+F:\dev\T\FFmpegApi\Views\Effects\Enums\TextStyle.cs -> 0.1.1.89
+F:\dev\T\FFmpegApi\obj\Debug\Views\Effects\BeatsEffect.g.i.cs -> 0.0.0.1
 
 === Version Statistics ===
-Total files processed: 15
-Files updated: 3
-Average project version: 0.0.0.12
+Total files processed: 26
+Files updated: 11
+Average project version: 0.0.0.17

@@ -10358,5 +10358,173 @@
     "NewVersion": "0.0.0.1",
     "Date": "2026-01-06T02:16:46.6736598Z",
     "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\VideoPlayer.g.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T02:23:47.6292857Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\VideoPlayer.g.i.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T02:23:47.6316625Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Release\\.NETFramework,Version=v4.8.1.AssemblyAttributes.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T02:23:47.6526468Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Release\\VideoPlayer.g.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T02:23:47.6547838Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\FFmpegVideoPlayer.cs",
+    "OldVersion": "0.0.2.93",
+    "NewVersion": "0.0.2.94",
+    "Date": "2026-01-06T02:25:51.004161Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\VideoPlayer.g.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T02:25:51.0350743Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\VideoPlayer.g.i.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T02:25:51.0395091Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\FFmpegVideoPlayer.cs",
+    "OldVersion": "0.0.2.94",
+    "NewVersion": "0.0.2.95",
+    "Date": "2026-01-06T02:28:20.5258824Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\VideoPlayer.g.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T02:28:20.5491198Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\VideoPlayer.g.i.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T02:28:20.5515816Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\FFmpegVideoPlayer.cs",
+    "OldVersion": "0.0.2.95",
+    "NewVersion": "0.0.2.96",
+    "Date": "2026-01-06T02:28:46.9718081Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\VideoPlayer.g.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T02:28:46.9912034Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\VideoPlayer.g.i.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T02:28:46.9946268Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\Views\\ProgressbarView.xaml.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T03:15:57.7402126Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\VideoPlayer.g.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T03:15:57.8182979Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\VideoPlayer.g.i.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T03:15:57.8207212Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\Views\\Effects\\BeatsEffect.xaml.cs",
+    "OldVersion": "0.1.1.28",
+    "NewVersion": "0.1.1.29",
+    "Date": "2026-01-06T03:15:57.8433Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\Views\\Effects\\DragShadowAdorner.cs",
+    "OldVersion": "0.1.0.29",
+    "NewVersion": "0.1.0.30",
+    "Date": "2026-01-06T03:15:57.8457309Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\Views\\Effects\\IEffect.cs",
+    "OldVersion": "0.1.0.98",
+    "NewVersion": "0.1.0.99",
+    "Date": "2026-01-06T03:15:57.8475602Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\Views\\Effects\\ScrollIndicatorAdorner.cs",
+    "OldVersion": "0.1.0.28",
+    "NewVersion": "0.1.0.29",
+    "Date": "2026-01-06T03:15:57.8491976Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\Effects\\BeatsEffect.g.i.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T03:15:57.8748299Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\Views\\ProgressbarView.g.i.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T03:15:57.8989584Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\Views\\Effects\\Enums\\TextStyle.cs",
+    "OldVersion": "0.1.1.88",
+    "NewVersion": "0.1.1.89",
+    "Date": "2026-01-06T03:15:57.8999386Z",
+    "Type": "auto"
+  },
+  {
+    "File": "F:\\dev\\T\\FFmpegApi\\obj\\Debug\\Views\\Effects\\BeatsEffect.g.i.cs",
+    "OldVersion": "none",
+    "NewVersion": "0.0.0.1",
+    "Date": "2026-01-06T03:15:57.921036Z",
+    "Type": "auto"
   }
 ]

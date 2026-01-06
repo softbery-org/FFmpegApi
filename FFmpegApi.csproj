@@ -88,6 +88,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Views\Effects\BeatsEffect.xaml.cs">
+      <DependentUpon>BeatsEffect.xaml</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Views\Effects\DragShadowAdorner.cs" />
+    <Compile Include="Views\Effects\Enums\TextStyle.cs" />
+    <Compile Include="Views\Effects\IEffect.cs" />
+    <Compile Include="Views\Effects\ScrollIndicatorAdorner.cs" />
     <Compile Include="FFmpegAudioPlayer.cs" />
     <Compile Include="FFmpegHelper.cs" />
     <Compile Include="FFmpegVideoPlayer.cs" />
@@ -100,15 +107,36 @@
       <DependentUpon>VideoPlayer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\ProgressbarView.xaml.cs">
+      <DependentUpon>ProgressbarView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\Effects\BeatsEffect.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="VideoPlayer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ProgressbarView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\Effects\Image\alien_skeleton.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\Effects\Image\green_lava.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="UpdateAssemblyVersion" BeforeTargets="BeforeBuild">

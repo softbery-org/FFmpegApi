@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="FFmpegApi.Views.Effects.BeatsEffect"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FFmpegApi.Views.Effects"
+             mc:Ignorable="d" 
+             d:DesignHeight="250" d:DesignWidth="250">
+    <Grid Background="Transparent">
+        <!-- Opcjonalnie: Transparent, aby Grid nie zasłaniał -->
+        <!-- Tło z transformami – WYŚRODKOWANE -->
+        <Image x:Name="BackgroundImage" 
+               Source="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=BackgroundImageSource}"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"
+               Stretch="Uniform">
+            <!-- Opcjonalnie: Uniform, aby zachować proporcje bez rozciągania -->
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <RotateTransform x:Name="BeatRotate" CenterX="125" CenterY="125"/>
+                    <ScaleTransform x:Name="BeatScale" CenterX="125" CenterY="125"/>
+                    <TranslateTransform x:Name="BeatTranslate"/>
+                    <SkewTransform x:Name="BeatSkew" CenterX="125" CenterY="125"/>
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
+        <!-- Warstwa efektu (ImageSource) – też wyśrodkowana dla spójności -->
+        <Image x:Name="BeatImageElement" 
+               Source="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=ImageSource}"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Stretch="Uniform"
+               Opacity="1.0"/>
+    </Grid>
+</UserControl>  
