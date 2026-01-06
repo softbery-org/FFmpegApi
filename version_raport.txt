@@ -1,0 +1,8 @@
+F:\dev\T\FFmpegApi\FFmpegVideoPlayer.cs -> 0.0.2.93
+F:\dev\T\FFmpegApi\obj\Debug\VideoPlayer.g.cs -> 0.0.0.1
+F:\dev\T\FFmpegApi\obj\Debug\VideoPlayer.g.i.cs -> 0.0.0.1
+
+=== Version Statistics ===
+Total files processed: 15
+Files updated: 3
+Average project version: 0.0.0.12
