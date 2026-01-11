@@ -1,4 +1,4 @@
-// Version: 0.0.1.71
+// Version: 0.0.1.91
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,15 +13,177 @@ using System.Windows.Media.Imaging;
 
 using FFmpeg.AutoGen;
 
+using FFmpegApi.Views;
+
+using Media;
+
 using NAudio.Wave;
+
+using Thmd.Views;
 
 namespace FFmpegApi
 {
-    public partial class VideoPlayer : UserControl
+    public partial class VideoPlayer : UserControl, IPlayer, INotifyPropertyChanged
     {
+        private FFmpegVideoPlayer _videoPlayer = new FFmpegVideoPlayer();
+        private TimeSpan _position;
+        private TimeSpan _duration;
+        private double _volume;
+
+        #region WinAPI
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern uint SetThreadExecutionState(uint esFlags);
+
+        private const uint BLOCK_SLEEP_MODE = 2147483651u;   // ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED
+        private const uint DONT_BLOCK_SLEEP_MODE = 2147483648u; // ES_CONTINUOUS
+
+        #endregion
+
+        public Playlist Playlist => PlaylistView;
+
+        public Controlbar Controlbar => throw new NotImplementedException();
+
+        public InfoBox InfoBox => throw new NotImplementedException();
+
+        public ProgressbarView ProgressBar => ProgressbarView;
+
+        public FrameworkElement Subtitle => throw new NotImplementedException();
+
+        public TimeSpan Position 
+        { 
+            get => _position; 
+            set 
+            { 
+                _position = _videoPlayer.Position;
+                OnPropertyChanged(nameof(Position), ref _position, value);
+            }
+        }
+
+        public TimeSpan Duration => _duration;
+
+        public double Volume { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool isFullscreen { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool isPlaying { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool isPaused { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool isMute { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool isStopped { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public event EventHandler<EventArgs> TimeChanged;
+        public event EventHandler<EventArgs> Playing;
+        public event EventHandler<EventArgs> Paused;
+        public event EventHandler<EventArgs> Stopped;
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public VideoPlayer()
         {
             InitializeComponent();
+            var path1 = @"F:\Filmy\Futurama\Futurama S07E03 PL 720p.mp4";
+            var path2 = @"E:\films\Futurama\Season5-6\2 - Futurama 5-7.mp4";
+            var path3 = @"E:\films\Rebel_Moon_A_Child_of_Fire_part_1_Dubbing.mp4";
+            var path4 = @"E:\films\Loki.S02E06.MULTi.720p.DSNP.WEB-DL.H264.DDP5.1.Atmos-Donnek.mp4";
+            _videoPlayer.FrameReady += bitmap =>
+            {
+                VideoImage.Dispatcher.Invoke(() =>
+                {
+                    VideoImage.Source = bitmap;
+                });
+                _textblockuraDuration.Text = _duration.ToString("hh\\:mm\\:ss");
+            };
+            _videoPlayer.TimeChanged += (s, e) =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    _textblockuraDuration.Text = _videoPlayer.Duration.ToString("hh\\:mm\\:ss");
+                    _position = e.Position;
+                    _textblockPosition.Text = _position.ToString("hh\\:mm\\:ss");
+                });
+            };
+            _videoPlayer.Play(path1);
+        }
+
+        public void Dispose()
+        {
+            _videoPlayer?.Dispose();
+        }
+
+        public void Next()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Pause()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Play()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Play(MediaItem media)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PlayNext(MediaItem media)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Preview()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Seek(TimeSpan time)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Seek(TimeSpan time, SeekDirection seek_direction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Stop()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TogglePlayPause()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void TogglePlayPause_Click(object sender, RoutedEventArgs e)
+        {
+            _videoPlayer.TogglePlayPause();
+        }
+
+        private void _pause_Click(object sender, RoutedEventArgs e)
+        {
+            _videoPlayer.TogglePlayPause();
+        }
+
+        private void _resume_Click(object sender, RoutedEventArgs e)
+        {
+            _videoPlayer.TogglePlayPause();
+        }
+
+        private void _seek_Click(object sender, RoutedEventArgs e)
+        {
+            _videoPlayer.Seek(TimeSpan.FromMinutes(5));
+        }
+
+        protected void OnPropertyChanged<T>(string propertyName, ref T field, T value)
+        {
+            if (!EqualityComparer<T>.Default.Equals(field, value))
+            {
+                field = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }
@@ -71,7 +233,7 @@ namespace FFmpegApi
 
 //        // ZARZĄDZANIE ODTWARZANIEM
 //        private Thread _decodeThread;
-//        private bool _running = true, _paused = false, _seeking = false;
+//        private bool _run = true, _pause = false, _seek = false;
 //        private long _seekTimestamp = -1, _seekTargetPts;
 //        private TimeSpan _seekTime, _currentTime;
 
@@ -109,7 +271,7 @@ namespace FFmpegApi
 
 //        public TimeSpan Duration { get; private set; }
 //        public TimeSpan Position { get; private set; }
-//        public bool isPaused { get; set; }
+//        public bool isPause { get; set; }
 //        public bool isPlaying { get; set; }
 //        public bool isStopped { get; set; }
 
@@ -214,7 +376,7 @@ namespace FFmpegApi
 
 //            //_waveOut.Play();
 
-//            while (_running && ffmpeg.av_read_frame(_fmt, _packet) >= 0)
+//            while (_run && ffmpeg.av_read_frame(_fmt, _packet) >= 0)
 //            {
 
 //                if (_packet->stream_index != _videoStream)
@@ -347,20 +509,20 @@ namespace FFmpegApi
 //                // SyncVideoWithAudio();
 
 //                // Pauzowanie odtwarzania
-//                while (_paused && _running)
+//                while (_pause && _run)
 //                {
 //                    Thread.Sleep(50);
 //                    _waveOut.Pause();
 //                }
 
-//                if (!_paused)
+//                if (!_pause)
 //                {
 //                    _waveOut.Play();
 //                }
 
-//                if (_seeking)
+//                if (_seek)
 //                {
-//                    _seeking = false;
+//                    _seek = false;
 //                    int ret = ffmpeg.av_seek_frame(
 //                        fmt,
 //                        _videoStream,
@@ -513,22 +675,22 @@ namespace FFmpegApi
 
 //        #region Metody publiczne
 
-//        public void Stop() => _running = false;
+//        public void Stop() => _run = false;
 
-//        public void Pause() => _paused = true;
+//        public void Pause() => _pause = true;
 
-//        public void TogglePlayPause() => _paused = !_paused;
+//        public void TogglePlayPause() => _pause = !_pause;
 
 //        public void Resume()
 //        {
-//            _paused = false;
+//            _pause = false;
 //            _waveOut.Play();
 //        }
 
 //        public void Play(string file)
 //        {
 //            _filePath = file;
-//            _running = true;
+//            _run = true;
 //            _decodeThread = new Thread(() => DecodeLoop(file));
 //            _decodeThread.IsBackground = true;
 //            _decodeThread.Start();
@@ -539,7 +701,7 @@ namespace FFmpegApi
 //        public void Seek(TimeSpan time)
 //        {
 //            _seekTime = time;
-//            _seeking = true;
+//            _seek = true;
 //        }
 
 
@@ -567,7 +729,7 @@ namespace FFmpegApi
 //                    //SyncVideoWithAudio();
 //                    break;
 //            }
-//            _seeking = true;
+//            _seek = true;
 //        }
 
 //        private long SeekTargetTime(AVFormatContext* fmt, TimeSpan position)

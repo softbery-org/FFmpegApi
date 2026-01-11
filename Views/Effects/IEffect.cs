@@ -11,4 +11,4 @@ namespace FFmpegApi.Views.Effects
         string Name { get; }
     }
 }
-// Version: 0.1.0.99
+// Version: 0.1.1.0

@@ -1,4 +1,4 @@
-// Version: 0.1.1.29
+// Version: 0.1.1.31
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -12,18 +12,47 @@ using Thmd.Consolas;
 namespace FFmpegApi.Views.Effects
 {
     /// <summary>
-    /// Logika interakcji dla klasy Beats.xaml
+    /// Logika interakcji dla klasy BeatsEffect
     /// </summary>
     public partial class BeatsEffect : UserControl, INotifyPropertyChanged, IEffect
     {
         private double _time = 0.0;
         private DateTime _lastFrameTime;
 
-        // Stałe częstotliwości
-        private const double PRIMARY_BEAT_FREQUENCY = 1.8;
-        private const double SECONDARY_BEAT_FREQUENCY = 0.9;
+        // Zmienne częstotliwości
+        private double PRIMARY_BEAT_FREQUENCY = 1.8;
+        private double SECONDARY_BEAT_FREQUENCY = 0.9;
+
+        /// <summary>
+        /// Główna zmienna częstotliwości
+        /// </summary>
+        public double PrimaryBeatFrequency 
+        {
+            get => PRIMARY_BEAT_FREQUENCY; 
+            set =>
+            { 
+                PRIMARY_BEAT_FREQUENCY = value;
+                OnPropertyChanged(nameof(PrimaryBeatFrequency));
+            }
+        }
+
+        /// <summary>
+        /// Podrzędna zmienna częstotliwości
+        /// </summary>
+        public double SecondaryBeatFrequency 
+        {
+            get => SECONDARY_BEAT_FREQUENCY;
+            set =>
+            { 
+                SECONDARY_BEAT_FREQUENCY = value; 
+                OnPropertyChanged(nameof(SecondaryBeatFrequency));
+            }
+        }
 
         // Event INotifyPropertyChanged (opcjonalny dla DependencyProperties)
+        /// <summary>
+        /// Property changed event dla DependencyProperties i zmiennych
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -32,10 +61,16 @@ namespace FFmpegApi.Views.Effects
         }
 
         // DependencyProperty dla tła (ImageSource w Twoim kodzie → BackgroundImageSource)
+        /// <summary>
+        /// DependencyProperty dla tła
+        /// </summary>
         public static readonly DependencyProperty BackgroundImageSourceProperty =
             DependencyProperty.Register(nameof(BackgroundImageSource), typeof(ImageSource), typeof(BeatsEffect),
                 new PropertyMetadata(null, OnBackgroundImageSourceChanged));
 
+        /// <summary>
+        /// Źródło obrazu tła
+        /// </summary>
         public ImageSource BackgroundImageSource
         {
             get => (ImageSource)GetValue(BackgroundImageSourceProperty);
@@ -46,15 +81,21 @@ namespace FFmpegApi.Views.Effects
         {
             if (d is BeatsEffect control)
             {
-                // Opcjonalnie: logika po zmianie
+                control.ForceUpdate(_time);
             }
         }
 
         // DependencyProperty dla efektu (ImageSource)
+        /// <summary>
+        /// 
+        /// </summary>
         public static readonly DependencyProperty ImageSourceProperty =
             DependencyProperty.Register(nameof(ImageSource), typeof(ImageSource), typeof(BeatsEffect),
                 new PropertyMetadata(null, OnImageSourceChanged));
 
+        /// <summary>
+        /// Źródło obrazu grafiki
+        /// </summary>
         public ImageSource ImageSource
         {
             get => (ImageSource)GetValue(ImageSourceProperty);
@@ -66,7 +107,7 @@ namespace FFmpegApi.Views.Effects
             if (d is BeatsEffect control && e.NewValue == null)
             {
                 // Domyślna wartość tylko jeśli null
-                control.ImageSource = control.LoadImageFromResource("pack://Thmd:,,,/Image/alien_skeleton.png");
+                control.ImageSource = control.LoadImageFromResource("pack://application:,,,/Image/alien_skeleton.png");
             }
         }
 
@@ -117,7 +158,6 @@ namespace FFmpegApi.Views.Effects
         {
             try
             {
-                // 1️⃣ Najpierw próbujemy jako zasób WPF (Resource)
                 var uri = new Uri(resourcePath, UriKind.Absolute);
                 var bitmap = new BitmapImage(uri);
                 return bitmap;
@@ -126,7 +166,6 @@ namespace FFmpegApi.Views.Effects
             {
                 try
                 {
-                    // 2️⃣ Jeśli nie działa — spróbujmy jako Content (plik w katalogu aplikacji)
                     string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, resourcePath.Replace('/', '\\'));
                     if (System.IO.File.Exists(path))
                     {
@@ -180,6 +219,10 @@ namespace FFmpegApi.Views.Effects
             BeatRotate.Angle = System.Math.Sin(_time * PRIMARY_BEAT_FREQUENCY * System.Math.PI) * 5;
         }
 
+        /// <summary>
+        /// Przymusowa aktualizacja
+        /// </summary>
+        /// <param name="deltaTime">Czas aktualizacji w sekundach</param>
         public void ForceUpdate(double deltaTime)
         {
             _time += deltaTime;

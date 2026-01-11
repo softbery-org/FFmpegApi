@@ -1,4 +1,4 @@
-// Version: 0.0.0.2
+// Version: 0.0.0.5
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -169,5 +169,22 @@ public interface IPlayer : IDisposable
     /// <summary>
     /// Zwalnia wszystkie zasoby używane przez odtwarzacz.
     /// </summary>
+    /// <remarks>
+    /// Metoda zwalnia zarówno zasoby zarządzane, jak i niezarządzane,
+    /// w tym dekodery audio/wideo, strumienie FFmpeg, bufory,
+    /// uchwyty urządzeń audio, timery oraz wątki robocze.
+    /// <para>
+    /// Po wywołaniu <see cref="Dispose"/> obiekt przechodzi w stan
+    /// nieużywalny i żadna z metod ani właściwości interfejsu
+    /// nie powinna być dalej wywoływana.
+    /// </para>
+    /// <para>
+    /// Wielokrotne wywołanie tej metody nie powinno powodować wyjątków.
+    /// </para>
+    /// </remarks>
+    /// <exception cref="ObjectDisposedException">
+    /// Może zostać zgłoszony, jeśli inne metody odtwarzacza
+    /// zostaną wywołane po uprzednim zwolnieniu zasobów.
+    /// </exception>
     void Dispose();
 }

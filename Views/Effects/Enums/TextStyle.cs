@@ -23,4 +23,4 @@ namespace FFmpegApi.Views.Enums
         BoldItalic
     }
 }
-// Version: 0.1.1.89
+// Version: 0.1.1.90

@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="Thmd.Views.InfoBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Thmd.Views"
+             mc:Ignorable="d" 
+             Width="100" Height="25" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Background="Beige">
+    <!--<FrameworkElement.Resources>
+        <ResourceDictionary>
+            -Animacje -
+            <Storyboard x:Key="fadeOutBox" FillBehavior="HoldEnd">
+                <DoubleAnimation Storyboard.TargetName="_grid" 
+                            Storyboard.TargetProperty="Opacity" 
+                            To="0.0" 
+                            Duration="0:0:2"/>
+            </Storyboard>
+            <Storyboard x:Key="fadeInBox" FillBehavior="HoldEnd">
+                <DoubleAnimation Storyboard.TargetName="_grid" 
+                            Storyboard.TargetProperty="Opacity" 
+                            To="1.0" 
+                            Duration="0:0:3"/>
+            </Storyboard>
+        </ResourceDictionary>
+    </FrameworkElement.Resources>
+    <Grid x:Name="_grid" Height="25">
+        <TextBlock x:Name="_infoTextBlock" Foreground="red" FontSize="16" FontWeight="Bold" Text="To jest info text" VerticalAlignment="Top" HorizontalAlignment="Right" TextWrapping="Wrap">
+            <TextBlock.Effect>
+                <DropShadowEffect/>
+            </TextBlock.Effect>
+        </TextBlock>
+    </Grid>-->
+    <FrameworkElement.Resources>
+        <ResourceDictionary>
+            <!--Animacje -->
+            <Storyboard x:Key="fadeOutBox" FillBehavior="HoldEnd">
+                <DoubleAnimation Storyboard.TargetName="_grid" 
+                            Storyboard.TargetProperty="Opacity" 
+                            To="0.0" 
+                            Duration="0:0:2"/>
+            </Storyboard>
+            <Storyboard x:Key="fadeInBox" FillBehavior="HoldEnd">
+                <DoubleAnimation Storyboard.TargetName="_grid" 
+                            Storyboard.TargetProperty="Opacity" 
+                            To="1.0" 
+                            Duration="0:0:3"/>
+            </Storyboard>
+        </ResourceDictionary>
+    </FrameworkElement.Resources>
+    <Grid x:Name="_grid">
+        
+    </Grid>
+</UserControl>
