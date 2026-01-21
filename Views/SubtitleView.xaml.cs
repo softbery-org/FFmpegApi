@@ -1,4 +1,4 @@
-// Version: 0.0.0.2
+// Version: 0.0.0.4
 //// SubtitleControl.xaml.cs
 //// Version: 0.1.5.89
 //// A custom user control for displaying subtitles from an SRT file with support for formatting tags
@@ -150,7 +150,7 @@
 //    private const int CacheTimeWindow = 10000; // 10 seconds window for cache validity (in milliseconds)
 
 //    /// <summary>
-//    /// Occurs when the position Time changes, allowing synchronization with the media _player.
+//    /// Occurs when the position Time changes, allowing synchronization with the _media _player.
 //    /// </summary>
 //    public event TimeHandlerDelegate TimeChanged;
 

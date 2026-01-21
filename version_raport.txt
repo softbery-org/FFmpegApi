@@ -1,9 +1,8 @@
-F:\dev\T\FFmpegApi\FFmpegVideoPlayer.cs -> 0.0.1.38
-F:\dev\T\FFmpegApi\VideoPlayer.xaml.cs -> 0.0.1.91
+F:\dev\T\FFmpegApi\FFmpegVideoPlayer.cs -> 0.0.2.33
 F:\dev\T\FFmpegApi\obj\Debug\GeneratedInternalTypeHelper.g.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\GeneratedInternalTypeHelper.g.i.cs -> 0.0.0.1
-F:\dev\T\FFmpegApi\obj\Debug\VideoPlayer.g.cs -> 0.0.0.1
-F:\dev\T\FFmpegApi\obj\Debug\VideoPlayer.g.i.cs -> 0.0.0.1
+F:\dev\T\FFmpegApi\obj\Debug\VideoPlayerControl.g.cs -> 0.0.0.1
+F:\dev\T\FFmpegApi\obj\Debug\VideoPlayerControl.g.i.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\Views\Controlbar.g.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\Views\Controlbar.g.i.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\Views\InfoBox.g.cs -> 0.0.0.1
@@ -12,12 +11,14 @@ F:\dev\T\FFmpegApi\obj\Debug\Views\Playlist.g.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\Views\Playlist.g.i.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\Views\ProgressbarView.g.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\Views\ProgressbarView.g.i.cs -> 0.0.0.1
-F:\dev\T\FFmpegApi\obj\Debug\Views\SubtitleControl.g.cs -> 0.0.0.1
-F:\dev\T\FFmpegApi\obj\Debug\Views\SubtitleControl.g.i.cs -> 0.0.0.1
+F:\dev\T\FFmpegApi\obj\Debug\Views\SubtitleView.g.cs -> 0.0.0.1
+F:\dev\T\FFmpegApi\obj\Debug\Views\SubtitleView.g.i.cs -> 0.0.0.1
+F:\dev\T\FFmpegApi\obj\Debug\Views\UserControlbar.g.cs -> 0.0.0.1
+F:\dev\T\FFmpegApi\obj\Debug\Views\UserControlbar.g.i.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\Views\Effects\BeatsEffect.g.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\Views\Effects\BeatsEffect.g.i.cs -> 0.0.0.1
 
 === Version Statistics ===
-Total files processed: 56
-Files updated: 18
-Average project version: 0.0.2.11
+Total files processed: 71
+Files updated: 19
+Average project version: 0.0.1.9

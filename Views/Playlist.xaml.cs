@@ -1,4 +1,4 @@
-// Version: 0.0.0.3
+// Version: 0.0.0.7
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -453,11 +453,16 @@ namespace FFmpegApi.Views
                 return;
             }
 
+            if (CurrentIndex > Videos.Count-1)
+                CurrentIndex = 0;
+            if (CurrentIndex < 0)
+                CurrentIndex = Videos.Count - 1;
+
             Current = Videos[CurrentIndex];
-            //Next = CurrentIndex + 1 < Videos.Count ? Videos[CurrentIndex + 1] : null;
-            Next = CurrentIndex + 1 < Videos.Count ? Videos[CurrentIndex + 1]:null;
-            //Previous = CurrentIndex > 0 ? Videos[CurrentIndex - 1] : null;
-            Previous = CurrentIndex > 0 ? Videos[CurrentIndex - 1] : null;
+
+            Next = CurrentIndex + 1 < Videos.Count ? Videos[CurrentIndex + 1] : Videos.First();
+
+            Previous = CurrentIndex > 0 ? Videos[CurrentIndex - 1] : Videos.Last();
         }
         #endregion
 
@@ -543,6 +548,7 @@ namespace FFmpegApi.Views
         {
             if (SelectedItem is MediaItem video)
             {
+                _player?.Stop();
                 PlayVideo(video);
                 CurrentIndex = Videos.IndexOf(video);
                 this.WriteLine($"Double click on {video.Name}");

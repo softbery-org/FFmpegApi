@@ -1,0 +1,48 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FFmpegApi"
+             xmlns:views="clr-namespace:FFmpegApi.Views"
+             xmlns:effects="clr-namespace:FFmpegApi.Views.Effects" x:Class="FFmpegApi.VideoPlayerControl"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="Black" x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="14*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="30*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        
+        <Image x:Name="VideoImage" 
+               Stretch="Fill" 
+               Source="/FFmpegApi;component/Views/Effects/Image/alien_skeleton.png" 
+               Grid.ColumnSpan="3" 
+               Grid.RowSpan="2"
+               MouseDown="VideoImage_MouseDown"/>
+        
+        <effects:BeatsEffect x:Name="BeatsEffect" />
+        
+        <views:ProgressbarView x:Name="ProgressbarView" VerticalAlignment="Stretch" ProgressText="01 d 01h 12m 28s" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="1" />
+        <views:KeyboardShortcutsView x:Name="Keyboard" Grid.ColumnSpan="3" Grid.RowSpan="2"  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <views:Playlist x:Name="PlaylistView" d:ItemsSource="{d:SampleData ItemCount=5}" Grid.ColumnSpan="3" Grid.RowSpan="2" Width="450" Height="350" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,50,0,0">
+            <views:Playlist.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </views:Playlist.View>
+        </views:Playlist>
+
+        <views:Controlbar x:Name="ControlbarView" 
+                          Grid.ColumnSpan="3" 
+                          Grid.RowSpan="1" 
+                          VerticalAlignment="Top" 
+                          HorizontalAlignment="Left" 
+                          Margin="110,120,0,0" />        
+    </Grid>
+</UserControl>

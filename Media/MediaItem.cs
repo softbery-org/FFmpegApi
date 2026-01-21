@@ -1,4 +1,4 @@
-// Version: 0.0.0.2
+// Version: 0.0.0.3
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -350,7 +350,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
 
 
     /// <summary>
-    /// Dispose the media item and release resources.
+    /// Dispose the _media item and release resources.
     /// </summary>
     public void Dispose()
     {
@@ -359,7 +359,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
     }
 
     /// <summary>
-    /// Set the media _player instance for this media item.
+    /// Set the _media _player instance for this _media item.
     /// </summary>
     /// <param name="player"></param>
     public void SetPlayer(IPlayer player)
@@ -371,7 +371,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            this.WriteLine($"Error with _player set in media class. In media: {Uri}. {ex.Message}");
+            this.WriteLine($"Error with _player set in _media class. In _media: {Uri}. {ex.Message}");
         }
     }
 
@@ -409,7 +409,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
     }
 
     /// <summary>
-    /// Start or resume media playback.
+    /// Start or resume _media playback.
     /// </summary>
     public void Play()
     {
@@ -417,12 +417,12 @@ public class MediaItem : UIElement, INotifyPropertyChanged
         {
             _player.Play(this);
             _isPlaying = true;
-            this.WriteLine($"[{GetType().Name}]: Playing media {Name}");
+            this.WriteLine($"[{GetType().Name}]: Playing _media {Name}");
         });
     }
 
     /// <summary>
-    /// Pause the media playback.
+    /// Pause the _media playback.
     /// </summary>
     public void Pause()
     {
@@ -430,12 +430,12 @@ public class MediaItem : UIElement, INotifyPropertyChanged
         {
             _player.Pause();
             _isPaused = true;
-            this.WriteLine($"[{GetType().Name}]Pause media {Name}");
+            this.WriteLine($"[{GetType().Name}]Pause _media {Name}");
         });
     }
 
     /// <summary>
-    /// Stop the media playback and reset the position to the beginning.
+    /// Stop the _media playback and reset the position to the beginning.
     /// </summary>
     public void Stop()
     {
@@ -444,12 +444,12 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             _player.Stop();
             //_isStopped = true;
             Position = 0.0;
-            this.WriteLine($"[{GetType().Name}]Stopped media {Name}");
+            this.WriteLine($"[{GetType().Name}]Stopped _media {Name}");
         });
     }
 
     /// <summary>
-    /// Move the media position forward by a specified number of seconds.
+    /// Move the _media position forward by a specified number of seconds.
     /// </summary>
     /// <param name="seconds">In seconds</param>
     public void Forward(double seconds)
@@ -459,7 +459,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
     }
 
     /// <summary>
-    /// Rewind the media position by a specified number of seconds.
+    /// Rewind the _media position by a specified number of seconds.
     /// </summary>
     /// <param name="seconds">in seconds</param>
     public void Rewind(double seconds)
@@ -472,7 +472,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
     {
         if (_uri == null || string.IsNullOrEmpty(_uri.LocalPath) || !File.Exists(_uri.LocalPath))
         {
-            Logger.Error("[" + GetType().Name + "]: Invalid media file path: " + _uri?.LocalPath);
+            Logger.Error("[" + GetType().Name + "]: Invalid _media file path: " + _uri?.LocalPath);
             return null;
         }
         try
@@ -485,12 +485,12 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             {
                 engine.GetMetadata(inputFile);
             }
-            Logger.Info("[" + GetType().Name + "]: Get metadata for media: " + _uri.LocalPath);
+            Logger.Info("[" + GetType().Name + "]: Get metadata for _media: " + _uri.LocalPath);
             return inputFile.Metadata;
         }
         catch (Exception exception)
         {
-            Logger.Error("]: Error getting metadata for media: " + _uri.LocalPath, exception);
+            Logger.Error("]: Error getting metadata for _media: " + _uri.LocalPath, exception);
             return null;
         }
     }
@@ -500,7 +500,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
         try
         {
             double duration = _metadataMediaToolkit.Duration.TotalMilliseconds;
-            Logger.Info($"[{GetType().Name}]: Get media {TimeSpan.FromMilliseconds(duration)} duration");
+            Logger.Info($"[{GetType().Name}]: Get _media {TimeSpan.FromMilliseconds(duration)} duration");
             if (duration == 0)
             {
                 try
@@ -530,7 +530,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 double fps = _metadataMediaToolkit.VideoData.Fps;
-                Logger.Info($"[{GetType().Name}]: Get media {fps} frame_size");
+                Logger.Info($"[{GetType().Name}]: Get _media {fps} frame_size");
                 return fps;
             }
             return 0;
@@ -549,7 +549,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 string format = _metadataMediaToolkit.VideoData.Format;
-                Logger.Info("[" + GetType().Name + "]: Get media " + format + " format");
+                Logger.Info("[" + GetType().Name + "]: Get _media " + format + " format");
                 return format;
             }
             return String.Empty;
@@ -568,7 +568,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 string frame_size = _metadataMediaToolkit.VideoData.FrameSize;
-                Logger.Info("[" + GetType().Name + "]: Get media " + frame_size + " frame_size");
+                Logger.Info("[" + GetType().Name + "]: Get _media " + frame_size + " frame_size");
                 return frame_size;
             }
             return String.Empty;
@@ -587,7 +587,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 string format = _metadataMediaToolkit.AudioData.Format;
-                Logger.Info("[" + GetType().Name + "]: Get media " + format + " audio_format");
+                Logger.Info("[" + GetType().Name + "]: Get _media " + format + " audio_format");
                 return format;
             }
             return String.Empty;
@@ -606,7 +606,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 string rate = _metadataMediaToolkit.AudioData.SampleRate;
-                Logger.Info("[" + GetType().Name + "]: Get media " + rate + " audio_sample_rate");
+                Logger.Info("[" + GetType().Name + "]: Get _media " + rate + " audio_sample_rate");
                 return rate;
             }
             return String.Empty;
@@ -625,7 +625,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 int rate = _metadataMediaToolkit.AudioData.BitRateKbs;
-                Logger.Info($"[{GetType().Name}]: Get media {rate} audio_bit_rate");
+                Logger.Info($"[{GetType().Name}]: Get _media {rate} audio_bit_rate");
                 return rate;
             }
             return 0;
@@ -644,7 +644,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 string chanel_output = _metadataMediaToolkit.AudioData.ChannelOutput;
-                Logger.Info("[" + GetType().Name + "]: Get media " + chanel_output + " audio_channel_output");
+                Logger.Info("[" + GetType().Name + "]: Get _media " + chanel_output + " audio_channel_output");
                 return chanel_output;
             }
             return String.Empty;

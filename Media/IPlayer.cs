@@ -1,4 +1,4 @@
-// Version: 0.0.0.5
+// Version: 0.0.0.14
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,22 +92,27 @@ public interface IPlayer : IDisposable
     /// <summary>
     /// Pobiera lub ustawia informację, czy multimedia są aktualnie odtwarzane.
     /// </summary>
-    bool isPlaying { get; set; }
+    bool isPlaying { get; }
 
     /// <summary>
     /// Pobiera lub ustawia informację, czy odtwarzanie jest wstrzymane.
     /// </summary>
-    bool isPaused { get; set; }
+    bool isPaused { get; }
 
     /// <summary>
     /// Pobiera lub ustawia informację, czy dźwięk jest wyciszony.
     /// </summary>
-    bool isMute { get; set; }
+    bool isMute { get; }
 
     /// <summary>
     /// Pobiera lub ustawia informację, czy odtwarzanie zostało całkowicie zatrzymane.
     /// </summary>
-    bool isStopped { get; set; }
+    bool isStopped { get; }
+
+    /// <summary>
+    /// Pobiera informację, czy odtwarzacz aktualnie buforuje dane multimedialne.
+    /// </summary>
+    bool isBuffering { get; }
 
     /// <summary>
     /// Rozpoczyna lub wznawia odtwarzanie aktualnego medium.
@@ -167,24 +172,7 @@ public interface IPlayer : IDisposable
     void Seek(TimeSpan time, SeekDirection seek_direction);
 
     /// <summary>
-    /// Zwalnia wszystkie zasoby używane przez odtwarzacz.
+    /// Otwiera widok listy odtwarzania.
     /// </summary>
-    /// <remarks>
-    /// Metoda zwalnia zarówno zasoby zarządzane, jak i niezarządzane,
-    /// w tym dekodery audio/wideo, strumienie FFmpeg, bufory,
-    /// uchwyty urządzeń audio, timery oraz wątki robocze.
-    /// <para>
-    /// Po wywołaniu <see cref="Dispose"/> obiekt przechodzi w stan
-    /// nieużywalny i żadna z metod ani właściwości interfejsu
-    /// nie powinna być dalej wywoływana.
-    /// </para>
-    /// <para>
-    /// Wielokrotne wywołanie tej metody nie powinno powodować wyjątków.
-    /// </para>
-    /// </remarks>
-    /// <exception cref="ObjectDisposedException">
-    /// Może zostać zgłoszony, jeśli inne metody odtwarzacza
-    /// zostaną wywołane po uprzednim zwolnieniu zasobów.
-    /// </exception>
-    void Dispose();
+    void OpenPlaylist();
 }

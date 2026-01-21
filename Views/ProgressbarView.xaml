@@ -69,6 +69,7 @@
             <Setter Property="Foreground" Value="{StaticResource MouseOverBrush}"/>
             <Setter Property="Padding" Value="10"/>
             <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="5"/>
@@ -88,8 +89,20 @@
     <Grid x:Name="_grid" Height="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="3*"/>
+            <RowDefinition Height="6*"/>
         </Grid.RowDefinitions>
+
+        <ProgressBar x:Name="_bufferBar"
+             Minimum="{Binding Minimum, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+             Maximum="{Binding Maximum, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+             Value="{Binding BufferValue, Mode=TwoWay}"
+             Style="{StaticResource DarkOrangeProgressBarStyle}"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
+             Opacity="1"
+             Grid.RowSpan="1" 
+             Grid.Row="1"/>
+
         <ProgressBar x:Name="_progressBar"
                      Minimum="{Binding Minimum, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
                      Maximum="{Binding Maximum, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
@@ -97,22 +110,27 @@
                      Style="{StaticResource DarkOrangeProgressBarStyle}"
                      HorizontalAlignment="Stretch"
                      VerticalAlignment="Stretch"
-                     Grid.RowSpan="1" 
-                     Grid.Row="2"/>
+                     Grid.RowSpan="2" 
+                     Grid.Row="0"/>
         <TextBlock x:Name="_progressText" 
                    Text="{Binding ProgressText, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
                    Foreground="{StaticResource MouseOverBrush}" 
                    VerticalAlignment="Center" 
                    HorizontalAlignment="Right" 
+                   TextAlignment="Right"
+                   FontSize="12"
+                   FontWeight="Bold"
+                   MinWidth="15"
                    Margin="0,0,10,0" 
-                   Grid.Row="2"
+                   Grid.Row="0"
                    Grid.RowSpan="2">
             <TextBlock.Effect>
-                <DropShadowEffect  ShadowDepth="2" BlurRadius="3" Opacity="0.3"/>
+                <DropShadowEffect ShadowDepth="2" BlurRadius="3" Opacity="0.3"/>
             </TextBlock.Effect>
         </TextBlock>
 
-        <Rectangle x:Name="_rectangleBufforBar" 
+
+        <!--<Rectangle x:Name="_rectangleBufforBar" 
            Opacity="0.7"
            VerticalAlignment="Stretch"
            HorizontalAlignment="Stretch"
@@ -127,13 +145,14 @@
             <Rectangle.Effect>
                 <DropShadowEffect ShadowDepth="1" BlurRadius="3" Opacity="0.3"/>
             </Rectangle.Effect>
-        </Rectangle>
+        </Rectangle>-->
 
         <Rectangle x:Name="_rectangleMouseOverPoint" 
            HorizontalAlignment="Left" 
-           Width="3" 
-           Margin="50,0,0,0" 
-           VerticalAlignment="Stretch" Grid.Row="1">
+           Width="6" 
+           Grid.Row="0" 
+           Grid.RowSpan="2"
+           RadiusX="50" RadiusY="2">
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                     <GradientStop Color="#FF4500" Offset="0"/>
@@ -144,9 +163,10 @@
                 <DropShadowEffect ShadowDepth="2" BlurRadius="3" Opacity="0.3"/>
             </Rectangle.Effect>
         </Rectangle>
+
         <Popup x:Name="_popup" 
                PlacementTarget="{Binding ElementName=_progressBar}" 
-               Placement="Top" 
+               Placement="Top"
                AllowsTransparency="True"
                IsHitTestVisible="True"
                Grid.RowSpan="2"
