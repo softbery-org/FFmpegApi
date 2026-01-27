@@ -1,5 +1,6 @@
-// Version: 0.0.0.9
+// Version: 0.0.0.14
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -46,6 +47,12 @@ namespace FFmpegApi.Views
         public Controlbar()
         {
             InitializeComponent();
+
+            VolumeSlider.ValueChanged += (s, e) =>
+            {
+                Volume = VolumeSlider.Value;
+                _player.Volume = Volume;
+            };
         }
 
         public Controlbar(IPlayer player) : this()
@@ -57,6 +64,29 @@ namespace FFmpegApi.Views
         {
             _player = player;
         }
+
+        #region Otwieranie / Zamknięcie Controlbara
+
+        public void OpenControlbar()
+        {
+            this.Dispatcher.InvokeAsync(() =>
+            {
+                var sb = (Storyboard)FindResource("fadeInControl");
+                sb.Begin();
+                Task.Delay(TimeSpan.FromSeconds(7));
+                this.Visibility = Visibility.Visible;
+            });
+        }
+
+        public void CloseControlbar()
+        {
+            var sb = (Storyboard)FindResource("fadeOutControl");
+            sb.Begin();
+            Task.Delay(TimeSpan.FromSeconds(7));
+            this.Visibility = Visibility.Collapsed;
+        }
+
+        #endregion
 
         #region Transport Buttons
 
@@ -187,7 +217,7 @@ namespace FFmpegApi.Views
 
         private void FullscreenBtn_Click(object sender, RoutedEventArgs e)
         {
-            _player?.isFullscreen = !_player.isFullscreen;
+            
         }
 
         private void OpenSubBtn_Click(object sender, RoutedEventArgs e)

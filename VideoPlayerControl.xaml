@@ -18,16 +18,16 @@
             <ColumnDefinition Width="30*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        
+
         <Image x:Name="VideoImage" 
                Stretch="Fill" 
                Source="/FFmpegApi;component/Views/Effects/Image/alien_skeleton.png" 
                Grid.ColumnSpan="3" 
                Grid.RowSpan="2"
                MouseDown="VideoImage_MouseDown"/>
-        
+
         <effects:BeatsEffect x:Name="BeatsEffect" />
-        
+
         <views:ProgressbarView x:Name="ProgressbarView" VerticalAlignment="Stretch" ProgressText="01 d 01h 12m 28s" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="1" />
         <views:KeyboardShortcutsView x:Name="Keyboard" Grid.ColumnSpan="3" Grid.RowSpan="2"  VerticalAlignment="Top" HorizontalAlignment="Left"/>
         <views:Playlist x:Name="PlaylistView" d:ItemsSource="{d:SampleData ItemCount=5}" Grid.ColumnSpan="3" Grid.RowSpan="2" Width="450" Height="350" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,50,0,0">
@@ -43,6 +43,7 @@
                           Grid.RowSpan="1" 
                           VerticalAlignment="Top" 
                           HorizontalAlignment="Left" 
-                          Margin="110,120,0,0" />        
+                          Margin="610,120,0,0" />
+        <views:Subtitles x:Name="SubtitleView" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" TextBlock.TextAlignment="Center" TextBlock.FontFamily="Segoe UI"/>
     </Grid>
 </UserControl>

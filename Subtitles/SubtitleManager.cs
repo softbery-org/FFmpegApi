@@ -1,4 +1,4 @@
-// Version: 0.1.17.22
+// Version: 0.1.17.24
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -90,6 +90,7 @@ public class SubtitleManager
 		}
 		try
 		{
+			//return ReadFileDetectEncoding(path);
 			return File.ReadAllText(file.FullName, Encoding.UTF8);
 		}
 		catch (Exception innerException)
@@ -98,7 +99,30 @@ public class SubtitleManager
 		}
 	}
 
-	private void LoadSubtitlesFromFile(string path)
+	// TODO: Sprawdzi� czy dzia�a!!!
+    private static string ReadFileDetectEncoding(string path)
+    {
+        byte[] bytes = File.ReadAllBytes(path);
+
+        if (bytes.Length >= 3 &&
+            bytes[0] == 0xEF &&
+            bytes[1] == 0xBB &&
+            bytes[2] == 0xBF)
+        {
+            return Encoding.UTF8.GetString(bytes); // UTF-8 BOM
+        }
+
+        try
+        {
+            return Encoding.UTF8.GetString(bytes); // UTF-8 bez BOM
+        }
+        catch
+        {
+            return Encoding.GetEncoding(1250).GetString(bytes); // PL ANSI
+        }
+    }
+
+    private void LoadSubtitlesFromFile(string path)
 	{
 		_subtitles.Clear();
 		string fileContent;

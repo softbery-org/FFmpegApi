@@ -1,9 +1,9 @@
-﻿# Thmd.Subtitles Documentation
+﻿# Subtitles Documentation
 
-This documentation covers the classes, enums, and exceptions in the `Thmd.Subtitles` namespace, which provides functionality for managing and parsing subtitles in media applications. The components support loading SRT subtitle files, parsing subtitle blocks, and handling related events and exceptions.
+This documentation covers the classes, enums, and exceptions in the `Subtitles` namespace, which provides functionality for managing and parsing subtitles in media applications. The components support loading SRT subtitle files, parsing subtitle blocks, and handling related events and exceptions.
 
-- **Version Information**: The classes are based on versions around 0.1.11.82 and 0.1.7.89.
-- **Namespace**: `Thmd.Subtitles`
+- **Version Information**: The classes are based on versions around 0.1.11.* and 0.1.17.*.
+- **Namespace**: `Subtitles`
 
 ## Classes
 
@@ -93,7 +93,7 @@ using Subtitles;
 
 try
 {
-    var manager = new SubtitleManager("path/to/subtitles.srt");
+    var manager = new SubtitleManager("path/to/subtitles.[srt, txt, sub]");
     var subtitles = manager.GetSubtitles();
     foreach (var subtitle in subtitles)
     {

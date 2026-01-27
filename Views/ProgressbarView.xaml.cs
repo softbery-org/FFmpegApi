@@ -1,4 +1,4 @@
-// Version: 0.0.0.15
+// Version: 0.0.0.17
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -8,6 +8,8 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+
+using NAudio.Gui;
 
 namespace FFmpegApi.Views
 {
@@ -174,7 +176,10 @@ namespace FFmpegApi.Views
         protected override void OnMouseLeave(MouseEventArgs e)
         {
             base.OnMouseLeave(e);
-            _rectangleMouseOverPoint.Margin = new Thickness(0, 0, 0, 0);
+            var pos = e.GetPosition(_progressBar);
+            _lastMousePosition = pos.X;
+            _rectangleMouseOverPoint.Margin = new Thickness(pos.X - (_rectangleMouseOverPoint.Width / 2), 0, 0, 0);
+
             _rectangleMouseOverPoint.Visibility = Visibility.Hidden;
             _mouseLeaveTimer.Start();
         }
@@ -183,10 +188,12 @@ namespace FFmpegApi.Views
 
         #region === Timer dla myszy ===
 
+        private double _lastMousePosition;
+
         private void MouseLeaveTimer_Tick(object sender, EventArgs e)
         {
             Task.Delay(MOUSE_LEAVE_TIME);
-            _rectangleMouseOverPoint.Margin = new Thickness(0, 0, 0, 0);
+            _rectangleMouseOverPoint.Margin = new Thickness(_lastMousePosition - (_rectangleMouseOverPoint.Width / 2), 0, 0, 0);
             _mouseLeaveTimer.Stop();
             HidePopup();
         }

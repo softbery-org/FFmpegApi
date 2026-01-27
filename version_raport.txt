@@ -1,4 +1,4 @@
-F:\dev\T\FFmpegApi\FFmpegVideoPlayer.cs -> 0.0.2.33
+F:\dev\T\FFmpegApi\Media\MediaItem.cs -> 0.0.0.12
 F:\dev\T\FFmpegApi\obj\Debug\GeneratedInternalTypeHelper.g.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\GeneratedInternalTypeHelper.g.i.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\VideoPlayerControl.g.cs -> 0.0.0.1
@@ -19,6 +19,6 @@ F:\dev\T\FFmpegApi\obj\Debug\Views\Effects\BeatsEffect.g.cs -> 0.0.0.1
 F:\dev\T\FFmpegApi\obj\Debug\Views\Effects\BeatsEffect.g.i.cs -> 0.0.0.1
 
 === Version Statistics ===
-Total files processed: 71
+Total files processed: 74
 Files updated: 19
-Average project version: 0.0.1.9
+Average project version: 0.0.1.11

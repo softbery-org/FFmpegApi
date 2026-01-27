@@ -5,8 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FFmpegApi.Views"
              mc:Ignorable="d"
-             Height="180"
-             Background="#121212" Width="580">
+             Height="160"
+             MinHeight="160"
+             Background="#121212" 
+             Width="490"
+             MinWidth="490">
 
     <UserControl.Resources>
         <LinearGradientBrush x:Key="OrangeGradient" StartPoint="0,0" EndPoint="1,0">
@@ -307,13 +310,22 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Zanikanie oraz pojawianie się kontroleki -->
+        <Storyboard x:Key="fadeOutControl" FillBehavior="HoldEnd">
+            <DoubleAnimation Storyboard.TargetName="_grid"  Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:2" />
+        </Storyboard>
+        <Storyboard x:Key="fadeInControl" FillBehavior="HoldEnd">
+            <DoubleAnimation Storyboard.TargetName="_grid"   Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:4" />
+        </Storyboard>
     </UserControl.Resources>
+    
     <Border Background="#1A1A1A"
             CornerRadius="14"
             Padding="16"
             Margin="12,12,12,10">
 
-        <Grid Margin="0,-6,0,-6">
+        <Grid x:Name="_grid" Margin="0,-6,0,-6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>

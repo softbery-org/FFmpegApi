@@ -1,4 +1,4 @@
-// Version: 0.0.0.7
+// Version: 0.0.0.11
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,6 +26,8 @@ namespace FFmpegApi.Views
 {
     public partial class Playlist : ListView, INotifyPropertyChanged
     {
+
+
         private IPlayer _player;
         private MediaItem _next;
         private MediaItem _previous;
@@ -117,7 +119,7 @@ namespace FFmpegApi.Views
             {
                 PlayVideo(video);
                 CurrentIndex = Videos.IndexOf(video);
-                this.WriteLine($"Context menu play {video.Name}");
+                this.WriteLine($"Context menu play {video.Name}"+Environment.NewLine);
             }
         }
 
@@ -205,10 +207,7 @@ namespace FFmpegApi.Views
             set => SetValue(VideosProperty, value);
         }
 
-        public static readonly DependencyProperty VideosProperty =
-            DependencyProperty.Register(nameof(Videos),
-                typeof(ObservableCollection<MediaItem>),
-                typeof(Playlist));
+        public static readonly DependencyProperty VideosProperty = DependencyProperty.Register(nameof(Videos), typeof(ObservableCollection<MediaItem>), typeof(Playlist));
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<EventArgs> PlaylistChanged;
@@ -438,7 +437,7 @@ namespace FFmpegApi.Views
 
             //Margin = new Thickness(playlistConfig.Left, playlistConfig.Top, 0, 0);
 
-            Logger.Info("Playlist loaded successfully.");
+            Logger.Info("Playlist loaded successfully."+Environment.NewLine);
             TrySetInfoBoxText("Playlist loaded.");
         }
 
@@ -551,7 +550,7 @@ namespace FFmpegApi.Views
                 _player?.Stop();
                 PlayVideo(video);
                 CurrentIndex = Videos.IndexOf(video);
-                this.WriteLine($"Double click on {video.Name}");
+                this.WriteLine($"Double click on {video.Name} "+Environment.NewLine);
                 TrySetInfoBoxText($"Play {video.Name}.");
             }
             base.OnMouseDoubleClick(e);
@@ -650,7 +649,7 @@ namespace FFmpegApi.Views
 
             if (Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
             {
-                this.WriteLine(new InvalidOperationException("DragDrop need STA thread."));
+                this.WriteLine(new InvalidOperationException("DragDrop need STA thread.")+Environment.NewLine);
             }
 
             _adornerLayer = AdornerLayer.GetAdornerLayer(this);
@@ -679,7 +678,7 @@ namespace FFmpegApi.Views
             }
             catch (NullReferenceException ex) when (ex.Message.Contains("OleDoDragDrop"))
             {
-                this.WriteLine($"Drag-drop crash: {ex}");
+                this.WriteLine($"Drag-drop crash: {ex} "+Environment.NewLine);
             }
             finally
             {
@@ -804,7 +803,7 @@ namespace FFmpegApi.Views
             double distanceFromTop = mousePos.Y - BorderThickness.Top;
             double distanceFromBottom = ActualHeight - mousePos.Y;
 
-            this.WriteLine("Distance from top" + mousePos.Y);
+            this.WriteLine("Distance from top" + mousePos.Y+""+Environment.NewLine);
 
             if (distanceFromTop < AutoScrollZone)
             {
@@ -1020,7 +1019,7 @@ namespace FFmpegApi.Views
 
                 video.Position = position.TotalMilliseconds;
 
-                this.WriteLine($"PlaylistView: Position updated {video.Name} -> {position}");
+                this.WriteLine($"PlaylistView: Position updated {video.Name} -> {position}"+Environment.NewLine);
             }
         }
 

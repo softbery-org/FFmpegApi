@@ -1,4 +1,4 @@
-// Version: 0.0.0.5
+// Version: 0.0.0.7
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +10,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using FFmpeg.AutoGen;
+
+using FFmpegApi.Logs;
 
 namespace FFmpegApi
 {
@@ -86,7 +88,9 @@ namespace FFmpegApi
                     ffmpeg.av_packet_unref(packet);
                 }
 
-                throw new Exception("Frame not found");
+                Logger.Error("No frame found at specified time {0} in file {1}", time, filePath);
+                return null;
+                //throw new Exception("Frame not found");
             }
             finally
             {

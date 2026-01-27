@@ -1,4 +1,4 @@
-// Version: 0.0.3.2
+// Version: 0.0.3.38
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
@@ -18,11 +17,9 @@ using FFmpegApi.Views;
 
 using Media;
 
-using Newtonsoft.Json.Linq;
-
 using Thmd.Views;
 
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using static MediaToolkit.Model.Metadata;
 
 namespace FFmpegApi
 {
@@ -40,6 +37,7 @@ namespace FFmpegApi
         private Task<WriteableBitmap> _thumbnail;
         private DispatcherTimer _thumbnailTimer;
         private TimeSpan _thumbnailTimerTime;
+        private MouseNotMove _mouseNotMove;
 
         #region WinAPI
 
@@ -127,6 +125,12 @@ namespace FFmpegApi
             }
         }
 
+        public Visibility SubtitleVisibility
+        {
+            get => SubtitleView.Visibility;
+            set => SubtitleView.Visibility = value;
+        }
+
         public event EventHandler<EventArgs> TimeChanged;
         public event EventHandler<EventArgs> Playing;
         public event EventHandler<EventArgs> Paused;
@@ -153,8 +157,122 @@ namespace FFmpegApi
             KeyboardEvents();
             ControlbarButtons();
             ControlbarSlideEvent();
+            CreateContextMenu();
+
+            _mouseNotMove = new MouseNotMove(this, CreateMouseActionOnNotMove(), CreateMouseActionOnMove())
+            {
+                MouseSleeps = TimeSpan.FromSeconds(20)
+            };
+
+            SubtitleView.Visibility = Visibility.Collapsed;
         }
 
+        private void CreateContextMenu()
+        {
+            var rightClickMenu = new ContextMenu();
+
+            MenuItem openItem = new MenuItem { Header = "Open" };
+            MenuItem addtoplaylistItem = new MenuItem { Header = "Add ..." };
+            MenuItem toggleplayItem = new MenuItem { Header = "Play/Pause" };
+            MenuItem stopItem = new MenuItem { Header = "Stop" };
+            MenuItem previewItem = new MenuItem { Header = "Preview" };
+            MenuItem nextItem = new MenuItem { Header = "Next" };
+            MenuItem playlistItem = new MenuItem { Header = "Show playlist" };
+            MenuItem shortcutsItem = new MenuItem { Header = "Show shortcuts" };
+            MenuItem helpItem = new MenuItem { Header = "Show help" };
+            MenuItem fullscreenItem = new MenuItem { Header = "Fullscreen" };
+            MenuItem seekItem = new MenuItem { Header = "Seek ..." };
+            MenuItem exitItem = new MenuItem { Header = "Exit program" };
+
+            // --- SCREEN ---
+            MenuItem screenItem = new MenuItem { Header = "Screen" };
+            MenuItem printscreenItem = new MenuItem { Header = "Print screen" };
+            MenuItem recordItem = new MenuItem { Header = "Start recording" };
+            MenuItem screenshotToClipboardItem = new MenuItem { Header = "Copy to clipboard" };
+
+            // SUBMENU
+            screenItem.Items.Add(printscreenItem);
+            screenItem.Items.Add(screenshotToClipboardItem);
+            screenItem.Items.Add(new Separator());
+            screenItem.Items.Add(recordItem);
+
+            // MENU GŁÓWNE
+            rightClickMenu.Items.Add(openItem);
+            rightClickMenu.Items.Add(addtoplaylistItem);
+            rightClickMenu.Items.Add(new Separator());
+            rightClickMenu.Items.Add(toggleplayItem);
+            rightClickMenu.Items.Add(stopItem);
+            rightClickMenu.Items.Add(previewItem);
+            rightClickMenu.Items.Add(nextItem);
+            rightClickMenu.Items.Add(seekItem);
+            rightClickMenu.Items.Add(new Separator());
+            rightClickMenu.Items.Add(playlistItem);
+            rightClickMenu.Items.Add(shortcutsItem);
+            rightClickMenu.Items.Add(helpItem);
+            rightClickMenu.Items.Add(new Separator());
+            rightClickMenu.Items.Add(fullscreenItem);
+            rightClickMenu.Items.Add(new Separator());
+            rightClickMenu.Items.Add(screenItem); // 👈 submenu
+            rightClickMenu.Items.Add(new Separator());
+            rightClickMenu.Items.Add(exitItem);
+
+            ContextMenu = rightClickMenu;
+        }
+
+        private List<Action> CreateMouseActionOnMove()
+        {
+            // Akcje wykonywane po wykryciu ruchu myszy
+            var actions = new List<Action>()
+            {
+                // Pierwsza akcja - pokazuje controlbar
+                () =>
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        Task.Run(() =>
+                        {
+                            Controlbar.OpenControlbar();
+                        });
+                    });
+                },
+                // Druga akcja - ukrywa playlistę, jeśli nie jest widoczna
+                () =>
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        //if (PlaylistVisibility == Visibility.Visible)
+                        //    Playlist.Visibility = Visibility.Collapsed;
+                    });
+                }
+            };
+            return actions;
+        }
+
+        private List<Action> CreateMouseActionOnNotMove()
+        {
+            // Akcje wykonywane po braku ruchu myszy
+            var actions = new List<Action>()
+            {
+                // Pierwsza akcja - ukrywa controlbar
+                () =>
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        Controlbar.CloseControlbar();
+                    });
+                },
+                // Druga akcja - ukrywa playlistę, jeśli nie jest widoczna
+                () =>
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        //if (PlaylistVisibility != Visibility.Visible)
+                        //    Playlist.Visibility = Visibility.Collapsed;
+                    });
+                }
+            };
+            return actions;
+        }
         private void ProgressbarThumbnailEvent()
         {
             _thumbnailTimer = new DispatcherTimer();
@@ -168,9 +286,22 @@ namespace FFmpegApi
             {
 
             };
+            Controlbar.PositionSlider.MouseDown += (s, e) =>
+            {
+                if (Playlist.Current == null)
+                    return;
+                if (_videoPlayer == null)
+                    return;
+                var mousePosition = e.GetPosition(Controlbar.PositionSlider);
+                var sliderWidth = Controlbar.PositionSlider.ActualWidth;
+                var val = (mousePosition.X * 100)/sliderWidth;
+                Debug.WriteLine(val);
+                var time = (Playlist.Current.Duration.TotalSeconds * val) / 100;
+                Seek(TimeSpan.FromSeconds(time));
+            };
         }
 
-        private void ControlbarButtons() 
+        private async void ControlbarButtons() 
         {
             Controlbar.PlayBtn.Click += (s, e) => TogglePlayPause();
             Controlbar.PreviouseButton.Click += (s, e) => Preview();
@@ -178,7 +309,8 @@ namespace FFmpegApi
             Controlbar.OpenFileButton.Click += (s, e) => OpenFile();
             Controlbar.OpenURLButton.Click += (s, e) =>
             {
-                _videoPlayer.Play("https://samplelib.com/lib/preview/mp4/sample-30s.mp4");
+                Playlist.AddAsync(new MediaItem("https://str33.vidoza.net/vod/v2/nvl4im6mi4feieno3xctxbf5g7v6pgf6c4gk2jvlvg3osci46zsux4wko5m3m2myyu/v.mp4")).GetAwaiter();
+                //_videoPlayer.Play("https://str33.vidoza.net/vod/v2/nvl4im6mi4feieno3xctxbf5g7v6pgf6c4gk2jvlvg3osci46zsux4wko5m3m2myyu/v.mp4");
             };
             Controlbar.OpenPlaylistButton.Click += (s, e) => TogglePlaylist();
             Controlbar.OpenSubtitlesButton.Click += (s, e) => OpenSubtitles();
@@ -196,14 +328,15 @@ namespace FFmpegApi
         private void ToggleFullscreen()
         {
             isFullscreen = !isFullscreen;
+            return;
         }
 
         private void ToggleControlbar()
         {
             if (Controlbar.Visibility == Visibility.Visible)
-                Controlbar.Visibility = Visibility.Visible;
-            else
                 Controlbar.Visibility = Visibility.Collapsed;
+            else
+                Controlbar.Visibility = Visibility.Visible;
         }
 
         private void ToggleKeyboardShortcuts()
@@ -214,18 +347,36 @@ namespace FFmpegApi
                 KeyboardShortcuts.Visibility = Visibility.Visible;
         }
 
+        #region Napisy
+
         private void OpenSubtitles()
         {
             var ofd = new Microsoft.Win32.OpenFileDialog
             {
                 Title = "Select Subtitle File",
-                Filter = "Subtitle Files|*.txt;*.sub|All Files|*.*",
-                Multiselect = true
+                Filter = "Subtitle Files|*.txt;*.sub;*.srt|All Files|*.*",
+                Multiselect = false
             };
             if (ofd.ShowDialog() == true)
-                foreach (var f in ofd.FileNames)
-                    Playlist.Current.SubtitlePath = f;
+            {
+                //foreach (var f in ofd.FileNames)
+                //    Playlist.Current.SubtitlePath = f;
+                SetSubtitle(ofd.FileName);
+                SubtitleVisibility = Visibility.Visible;
+            }
         }
+
+        public void SetSubtitle(string path)
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                SubtitleView.FilePath = path;
+                SubtitleView.EnableAiTranslation = false;
+                SubtitleView.TimeChanged += (sender, time) => SubtitleView.PositionTime = time;
+            });
+        }
+
+    #endregion
 
         private async void OpenFile()
         {
@@ -280,7 +431,7 @@ namespace FFmpegApi
             // Zmiana ramki
             _videoPlayer?.FrameReady += bitmap =>
             {
-                VideoImage.Dispatcher.Invoke(() =>
+                VideoImage.Dispatcher.InvokeAsync(() =>
                 {
                     VideoImage.Source = bitmap;
                 });
@@ -289,14 +440,12 @@ namespace FFmpegApi
             // Zmiana czasu
             _videoPlayer?.TimeChanged += (s, e) =>
             {
-                Dispatcher.Invoke((Action)(() =>
+                Dispatcher.InvokeAsync((Action)(() =>
                 {
                     _position = e.Position;
                     _duration = e.Duration;
 
-                    Controlbar.MediaTitle.Content = Playlist.Current?.Name ?? "";
-                    Controlbar.PositionTextbox.Text = $"{_position.ToString("hh\\:mm\\:ss")} ";
-                    Controlbar.DurationTextbox.Text = $"/ {_videoPlayer?.Duration.ToString("hh\\:mm\\:ss")}";
+                    SetThreadExecutionState(BLOCK_SLEEP_MODE);
 
                     UpdateUIOnTimeChanged((long)_position.TotalMilliseconds);
                     TimeChanged?.Invoke(this, e);
@@ -306,7 +455,8 @@ namespace FFmpegApi
             // Osiągnięcie końca odtwarzania
             _videoPlayer?.EndReached += (s, e) =>
             {
-                Dispatcher.Invoke(HandleEndReached);
+                SetThreadExecutionState(DONT_BLOCK_SLEEP_MODE);
+                Dispatcher.InvokeAsync(HandleEndReached);
             };
         }
 
@@ -317,21 +467,24 @@ namespace FFmpegApi
                 switch (repeat)
                 {
                     case "One":
-                        Stop();
+                        Debug.WriteLine("Repeat One");
                         Play(Playlist.Current);
                         break;
                     case "All":
+                        Debug.WriteLine("Repeat All");
                         Next();
                         break;
                     case "Random":
                         if (Playlist.Items.Count > 0)
                         {
+                            Debug.WriteLine("Repeat Random");
                             int randomIndex = _random.Next(Playlist.Items.Count);
                             Playlist.CurrentIndex = randomIndex;
                             Play(Playlist.Current);
                         }
                         break;
                     case "None":
+                        Debug.WriteLine("Repeat None");
                         Stop();
                         break;
                 }
@@ -349,62 +502,80 @@ namespace FFmpegApi
                 Playlist.PlayNext = null;
             }
             
-            Debug.WriteLine(Controlbar.RepeatComboBox.SelectedItem.ToString());
-            HandleRepeat(Controlbar.RepeatComboBox.SelectedItem.ToString());
+            if (Controlbar.RepeatComboBox.SelectedItem is ComboBoxItem item)
+            {
+                HandleRepeat(item.Content.ToString());
+            }
         }
 
+        private void ProgressbarOnMouseDown(object sender, MouseEventArgs e)
+        {
+            if (Playlist.Current == null)
+                return;
+
+            if (_videoPlayer == null)
+                return;
+
+            System.Windows.Point mousePosition = e.GetPosition(ProgressBar);
+            double width = ProgressBar.ActualWidth;
+
+            if (width <= 0)
+                return;
+
+            var val = (e.GetPosition(ProgressBar).X * 100) / width;
+            var time = (Playlist.Current.Duration.TotalSeconds * val) / 100;
+
+            ProgressBar.Value = (long)time;
+            Seek(TimeSpan.FromSeconds(time));
+
+            ProgressBar._rectangleMouseOverPoint.Margin = new Thickness(mousePosition.X - (ProgressBar._rectangleMouseOverPoint.Width / 2), 0, 0, 0);
+        }
+
+        private async void ProgressbarOnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (Playlist.Current == null)
+                return;
+
+            if (_videoPlayer == null)
+                return;
+
+            System.Windows.Point mousePosition = e.GetPosition(ProgressBar);
+            double width = ProgressBar.ActualWidth;
+            if (width <= 0) return;
+
+            var val = (e.GetPosition(ProgressBar).X * 100) / width;
+            var time = TimeSpan.FromSeconds((Playlist.Current.Duration.TotalSeconds * val) / 100);
+
+            ProgressBar._rectangleMouseOverPoint.Margin = new Thickness(mousePosition.X - (ProgressBar._rectangleMouseOverPoint.Width / 2), 0, 0, 0);
+
+            ProgressBar._popup.IsOpen = true;
+            ProgressBar.PopupText = $"{time.Hours}:{time.Minutes:00}:{time.Seconds:00}";
+            ProgressBar._popup.HorizontalOffset = mousePosition.X - (ProgressBar._popup.ActualWidth / 2);
+
+            MouseOverProgressBar(time);
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Seek(time);
+            }
+        }
+
+        private double _lastProgressbarMousePosition;
         private void ProgressbarEvent()
         {
-            ProgressBar.MouseDown += (s, e) =>
+            ProgressBar.MouseDown += ProgressbarOnMouseDown;
+
+            ProgressBar.MouseMove += ProgressbarOnMouseMove;
+
+            ProgressBar.MouseLeave += (s, e) =>
             {
-                if (Playlist.Current == null)
-                    return;
-
-                if (_videoPlayer == null)
-                    return;
-
                 System.Windows.Point mousePosition = e.GetPosition(ProgressBar);
-                double width = ProgressBar.ActualWidth;
 
-                if (width <= 0) 
-                    return;
-
-                var val = (e.GetPosition(ProgressBar).X*100)/width;
-                var time = (Playlist.Current.Duration.TotalSeconds*val)/100;
-
-                ProgressBar.Value = (long)time;
-                Seek(TimeSpan.FromSeconds(time));
-
-                ProgressBar._rectangleMouseOverPoint.Margin = new Thickness(mousePosition.X - (ProgressBar._rectangleMouseOverPoint.Width / 2), 0, 0, 0);
-            };
-
-            ProgressBar.MouseMove += async (s, e) =>
-            {
-                if (Playlist.Current == null) 
-                    return;
-
-                if (_videoPlayer == null)
-                    return;
-
-                System.Windows.Point mousePosition = e.GetPosition(ProgressBar);
-                double width = ProgressBar.ActualWidth;
-                if (width <= 0) return;
-
-                var val = (e.GetPosition(ProgressBar).X * 100) / width;
-                var time = TimeSpan.FromSeconds((Playlist.Current.Duration.TotalSeconds * val) / 100);
-
-                ProgressBar._rectangleMouseOverPoint.Margin = new Thickness(mousePosition.X - (ProgressBar._rectangleMouseOverPoint.Width / 2), 0, 0, 0);
-
-                ProgressBar._popup.IsOpen = true;
-                ProgressBar.PopupText = $"{time.Hours}:{time.Minutes:00}:{time.Seconds:00}";
                 ProgressBar._popup.HorizontalOffset = mousePosition.X - (ProgressBar._popup.ActualWidth / 2);
+                ProgressBar._rectangleMouseOverPoint.Margin = new Thickness(mousePosition.X - (ProgressBar._rectangleMouseOverPoint.Width / 2),0,0,0);
 
-                MouseOverProgressBar(time);
-
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-                    Seek(time);
-                }
+                //ProgressBar._rectangleMouseOverPoint.Visibility = Visibility.Collapsed;
+                //ProgressBar._popup.Visibility = Visibility.Collapsed;
             };
         }
 
@@ -427,13 +598,13 @@ namespace FFmpegApi
             {
                 if (Playlist.Videos.Count <= 0 || Playlist == null)
                 {
-                    Logger.Info("Playlist is empty.");
+                    Logger.Info("Playlist is empty."+Environment.NewLine);
                     MessageBox.Show("Playlist is empty.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 if (Playlist.Current == null && Playlist.Videos.Count > 0)
                 {
-                    Logger.Info("Current _media is not set.");
+                    Logger.Info("Current _media is not set."+Environment.NewLine);
                     Playlist.Current = Playlist.Videos[0];
                     Playlist.SelectedItem = Playlist.Current;
                 }
@@ -520,11 +691,16 @@ namespace FFmpegApi
         public void ToggleMute()
         {
             _videoPlayer.ToggleMute();
+            if (isMute)
+                Controlbar.VolumeSlider.Value = 0;
+            else
+                Controlbar.VolumeSlider.Value = _videoPlayer.Volume;
         }
 
         public void SetVolume(double volume)
         {
             Volume = volume;
+            Controlbar.VolumeSlider.Value = volume;
         }
 
         public void OpenPlaylist()
@@ -543,19 +719,24 @@ namespace FFmpegApi
 
         private void UpdateUIOnTimeChanged(long timeMs)
         {
+            Controlbar.MediaTitle.Content = Playlist.Current?.Name ?? "";
+            Controlbar.PositionTextbox.Text = $"{_position.ToString("hh\\:mm\\:ss")} ";
+            Controlbar.DurationTextbox.Text = $"/ {_videoPlayer?.Duration.ToString("hh\\:mm\\:ss")}";
+
+            ProgressBar.Value = (ProgressbarView.Maximum * timeMs) / _videoPlayer.Duration.TotalMilliseconds;
+            ProgressBar.ProgressText = $"{_position.ToString("hh\\:mm\\:ss")} / {_videoPlayer?.Duration.ToString("hh\\:mm\\:ss")}";
+
             if (Playlist.Current == null) return;
 
             _position = TimeSpan.FromMilliseconds(timeMs);
 
             Dispatcher.BeginInvoke(() => Playlist.Current.Position = timeMs);
 
-            ProgressbarView.Value = (ProgressbarView.Maximum * timeMs) / Playlist.Current.Duration.TotalMilliseconds;
-            ProgressbarView.ProgressText = $"{Playlist.Current.PositionFormatted} / {Playlist.Current.DurationFormatted}";
-
             var position_value = (100 * Playlist.Current.Position) / Playlist.Current.Duration.TotalMilliseconds;
-            Controlbar.PositionSlider.Value = position_value;
+             if (double.NaN!=position_value)
+                Controlbar.PositionSlider.Value = position_value;
 
-            //_subtitle.PositionTime = _position;
+            SubtitleView.PositionTime = _position;
         }
 
         #region === Obsługa Zmiany Rozmiaru Okna ===
@@ -624,10 +805,14 @@ namespace FFmpegApi
         #endregion
 
         #region === Obsługa Myszy dla VideoImage ===
-        
+
         private void VideoImage_MouseDown(object sender, MouseButtonEventArgs e)
         {
             VideoImage.Focus();
+            if (e.ChangedButton == MouseButton.Left && e.ClickCount == 1)
+            {
+                TogglePlayPause();
+            }
             if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
             {
                 isFullscreen = !isFullscreen;

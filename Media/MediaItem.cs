@@ -1,4 +1,4 @@
-// Version: 0.0.0.3
+// Version: 0.0.0.12
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -168,6 +168,10 @@ public class MediaItem : UIElement, INotifyPropertyChanged
         }
     }
 
+    public bool IsStream { get; private set; }
+
+    public bool IsLive { get; private set; }
+
     // --------------------- Events ---------------------
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -179,19 +183,20 @@ public class MediaItem : UIElement, INotifyPropertyChanged
 
     protected virtual void OnVolumeChanged(double newVolume)
     {
-        this.WriteLine($"Volume change: {newVolume}");
+        Logger.Info($"Volume change: {newVolume}"+Environment.NewLine);
         VolumeChanged?.Invoke(this, newVolume);
     }
 
     protected virtual void OnPlayerChanged(IPlayer player)
     {
-        this.WriteLine($"Player change event: {player}");
+        Logger.Info($"Player change event: {player}"+Environment.NewLine);
         PlayerChanged?.Invoke(this, player);
     }
 
     public MediaItem(string path)
     {
         _index = _nextIndex++;
+        InitFromPath(path, deferMetadata: false);
         _uri = new Uri(path);
         var fileInfo = new FileInfo(_uri.LocalPath);
         _name = fileInfo.Name;
@@ -210,6 +215,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
     public MediaItem(string path, bool deferMetadata)
     {
         _index = _nextIndex++;
+        InitFromPath(path, deferMetadata: false);
         _uri = new Uri(path);
         var fileInfo = new FileInfo(_uri.LocalPath);
         _name = fileInfo.Name;
@@ -222,6 +228,37 @@ public class MediaItem : UIElement, INotifyPropertyChanged
     }
 
     // --------------------- Pomocnicze metody ---------------------
+
+    public static MediaItem FromUrl(string url)
+    {
+        return new MediaItem(url, deferMetadata: true);
+    }
+
+    private void InitFromPath(string path, bool deferMetadata)
+    {
+        _uri = new Uri(path, UriKind.Absolute);
+
+        IsStream = !_uri.IsFile;
+        IsLive = IsStream && !_uri.AbsoluteUri.EndsWith(".m3u8", StringComparison.OrdinalIgnoreCase);
+
+        if (_uri.IsFile)
+        {
+            var fileInfo = new FileInfo(_uri.LocalPath);
+            _name = fileInfo.Name;
+            _extension = fileInfo.Extension.ToLowerInvariant();
+        }
+        else
+        {
+            _name = Path.GetFileName(_uri.AbsolutePath);
+            if (string.IsNullOrEmpty(_name))
+                _name = _uri.Host;
+
+            _extension = Path.GetExtension(_uri.AbsolutePath).ToLowerInvariant();
+        }
+
+        if (!deferMetadata && !IsLive)
+            LoadMetadata();
+    }
 
     private string FormatTimeSpan(TimeSpan ts)
     {
@@ -354,8 +391,13 @@ public class MediaItem : UIElement, INotifyPropertyChanged
     /// </summary>
     public void Dispose()
     {
-        _player.Dispose();
-        Logger.Info("[" + GetType().Name + "]: Disposing: " + Name);
+        try
+        {
+            _player?.Dispose();
+        }
+        catch { }
+
+        Logger.Info($"[{GetType().Name}]: Disposing: {Name}"+Environment.NewLine);
     }
 
     /// <summary>
@@ -371,36 +413,45 @@ public class MediaItem : UIElement, INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            this.WriteLine($"Error with _player set in _media class. In _media: {Uri}. {ex.Message}");
+            Logger.Error($"Error with _player set in _media class. In _media: {Uri}. {ex.Message}"+Environment.NewLine);
         }
     }
 
     private void AutoSetSubtitle(string path)
     {
-        FileInfo file = new FileInfo(path);
-        var tmp = ReturnNameWithoutExtension(file);
-        var subtitle = String.Empty;
+        if (!_uri.IsFile)
+            return;
 
-        //if (File.Exists($"{tmp}.{Subtitles.SubtitleExtensions.txt}"))
-        //{
-        //    SubtitlePath = $"{tmp}.{Subtitles.SubtitleExtensions.txt}";
-        //    this.WriteLine($"Auto set subtitle {SubtitlePath}");
-        //}
-        //else if (File.Exists($"{tmp}.{Subtitles.SubtitleExtensions.sub}"))
-        //{
-        //    SubtitlePath = $"{tmp}.{Subtitles.SubtitleExtensions.sub}";
-        //    this.WriteLine($"Auto set subtitle {SubtitlePath}");
-        //}
-        //else if (File.Exists($"{tmp}.{Subtitles.SubtitleExtensions.srt}"))
-        //{
-        //SubtitlePath = $"{tmp}.{Subtitles.SubtitleExtensions.srt}";
-        //    this.WriteLine($"Auto set subtitle {SubtitlePath}");
-        //}
-        //else
-        //{
-        //    SubtitlePath = String.Empty;
-        //    this.WriteLine("No auto subtitle.");
-        //}
+        if (!File.Exists(path))
+            return;
+
+        if (File.Exists(path))
+        {
+            FileInfo file = new FileInfo(path);
+            var tmp = ReturnNameWithoutExtension(file);
+            var subtitle = String.Empty;
+
+            //if (File.Exists($"{tmp}.{Subtitles.SubtitleExtensions.txt}"))
+            //{
+            //    SubtitlePath = $"{tmp}.{Subtitles.SubtitleExtensions.txt}";
+            //    this.WriteLine($"Auto set subtitle {SubtitlePath}");
+            //}
+            //else if (File.Exists($"{tmp}.{Subtitles.SubtitleExtensions.sub}"))
+            //{
+            //    SubtitlePath = $"{tmp}.{Subtitles.SubtitleExtensions.sub}";
+            //    this.WriteLine($"Auto set subtitle {SubtitlePath}");
+            //}
+            //else if (File.Exists($"{tmp}.{Subtitles.SubtitleExtensions.srt}"))
+            //{
+            //SubtitlePath = $"{tmp}.{Subtitles.SubtitleExtensions.srt}";
+            //    this.WriteLine($"Auto set subtitle {SubtitlePath}");
+            //}
+            //else
+            //{
+            //    SubtitlePath = String.Empty;
+            //    this.WriteLine("No auto subtitle.");
+            //}
+        }
     }
 
     private string ReturnNameWithoutExtension(FileInfo item)
@@ -417,7 +468,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
         {
             _player.Play(this);
             _isPlaying = true;
-            this.WriteLine($"[{GetType().Name}]: Playing _media {Name}");
+            Logger.Info($"[{GetType().Name}]: Playing _media {Name}"+Environment.NewLine);
         });
     }
 
@@ -430,7 +481,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
         {
             _player.Pause();
             _isPaused = true;
-            this.WriteLine($"[{GetType().Name}]Pause _media {Name}");
+            Logger.Info($"[{GetType().Name}]Pause _media {Name} "+Environment.NewLine);
         });
     }
 
@@ -444,7 +495,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             _player.Stop();
             //_isStopped = true;
             Position = 0.0;
-            this.WriteLine($"[{GetType().Name}]Stopped _media {Name}");
+            Logger.Info($"[{GetType().Name}]Stopped _media {Name} "+Environment.NewLine);
         });
     }
 
@@ -455,7 +506,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
     public void Forward(double seconds)
     {
         Position += seconds;
-        Logger.Info($"[{GetType().Name}]: Change position to forward with +{seconds} second(s)");
+        Logger.Info($"[{GetType().Name}]: Change position to forward with +{seconds} second(s) "+Environment.NewLine);
     }
 
     /// <summary>
@@ -465,63 +516,125 @@ public class MediaItem : UIElement, INotifyPropertyChanged
     public void Rewind(double seconds)
     {
         Position -= seconds;
-        Logger.Info($"[{GetType().Name}]: Rewind position by -{seconds} second(s)");
+        Logger.Info($"[{GetType().Name}]: Rewind position by -{seconds} second(s)"+Environment.NewLine);
     }
 
     private Metadata GetMetadata()
     {
-        if (_uri == null || string.IsNullOrEmpty(_uri.LocalPath) || !File.Exists(_uri.LocalPath))
+        if (_uri == null)
+            return null;
+
+        if (!_uri.IsFile)
         {
-            Logger.Error("[" + GetType().Name + "]: Invalid _media file path: " + _uri?.LocalPath);
+            Logger.Info($"[{GetType().Name}]: Stream detected – skipping MediaToolkit metadata"+Environment.NewLine);
             return null;
         }
+
+        if (!File.Exists(_uri.LocalPath))
+        {
+            Logger.Error($"Invalid media file path: {_uri.LocalPath} " + Environment.NewLine);
+            return null;
+        }
+
         try
         {
             MediaFile inputFile = new MediaFile
             {
                 Filename = _uri.LocalPath
             };
+
             using (Engine engine = new Engine())
             {
                 engine.GetMetadata(inputFile);
             }
-            Logger.Info("[" + GetType().Name + "]: Get metadata for _media: " + _uri.LocalPath);
+
             return inputFile.Metadata;
         }
-        catch (Exception exception)
+        catch (Exception ex)
         {
-            Logger.Error("]: Error getting metadata for _media: " + _uri.LocalPath, exception);
+            Logger.Error($"Metadata error: {ex.Message}"+Environment.NewLine);
             return null;
         }
     }
 
+    //private Metadata GetMetadata()
+    //{
+    //    if (_uri == null || string.IsNullOrEmpty(_uri.LocalPath) || !File.Exists(_uri.LocalPath))
+    //    {
+    //        Logger.Error("[" + GetType().Name + "]: Invalid _media file path: " + _uri?.LocalPath);
+    //        return null;
+    //    }
+    //    try
+    //    {
+    //        MediaFile inputFile = new MediaFile
+    //        {
+    //            Filename = _uri.LocalPath
+    //        };
+    //        using (Engine engine = new Engine())
+    //        {
+    //            engine.GetMetadata(inputFile);
+    //        }
+    //        Logger.Info("[" + GetType().Name + "]: Get metadata for _media: " + _uri.LocalPath);
+    //        return inputFile.Metadata;
+    //    }
+    //    catch (Exception exception)
+    //    {
+    //        Logger.Error("]: Error getting metadata for _media: " + _uri.LocalPath, exception);
+    //        return null;
+    //    }
+    //}
+
     private double GetDuration()
     {
-        try
+        if (IsLive)
+            return 0; // LIVE – brak czasu trwania
+
+        if (IsStream && _uri.AbsoluteUri.EndsWith(".m3u8"))
         {
-            double duration = _metadataMediaToolkit.Duration.TotalMilliseconds;
-            Logger.Info($"[{GetType().Name}]: Get _media {TimeSpan.FromMilliseconds(duration)} duration");
-            if (duration == 0)
+            try
             {
-                try
-                {
-                    // Próba pobrania czasu za pomocą alternatywnej biblioteki NAudio.Wave
-                    var p = new MediaFoundationReader(this._uri.AbsoluteUri);
-                    duration = p.TotalTime.TotalMilliseconds;
-                }
-                catch (Exception ex)
-                {
-                    Logger.Info($"[{GetType().Name}]: {ex.Message}");
-                }
+                return GetDurationFromM3u8(_uri.LocalPath) * 1000.0;
             }
-            return duration;
+            catch
+            {
+                return 0;
+            }
         }
-        catch (Exception ex)
-        {
-            Logger.Info($"[{GetType().Name}]: {ex.Message}");
-            return 0;
-        }
+
+        if (_metadataMediaToolkit != null)
+            return _metadataMediaToolkit.Duration.TotalMilliseconds;
+
+        return 0;
     }
+
+
+    //private double GetDuration()
+    //{
+    //    try
+    //    {
+    //        double duration = _metadataMediaToolkit.Duration.TotalMilliseconds;
+    //        Logger.Info($"[{GetType().Name}]: Get _media {TimeSpan.FromMilliseconds(duration)} duration");
+    //        if (duration == 0)
+    //        {
+    //            try
+    //            {
+    //                // Próba pobrania czasu za pomocą alternatywnej biblioteki NAudio.Wave
+    //                var p = new MediaFoundationReader(this._uri.AbsoluteUri);
+    //                duration = p.TotalTime.TotalMilliseconds;
+    //            }
+    //            catch (Exception ex)
+    //            {
+    //                Logger.Info($"[{GetType().Name}]: {ex.Message}");
+    //            }
+    //        }
+    //        return duration;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        Logger.Info($"[{GetType().Name}]: {ex.Message}");
+    //        return 0;
+    //    }
+    //}
 
     private double GetFPS()
     {
@@ -530,14 +643,14 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 double fps = _metadataMediaToolkit.VideoData.Fps;
-                Logger.Info($"[{GetType().Name}]: Get _media {fps} frame_size");
+                Logger.Info($"[{GetType().Name}]: Get _media {fps} frame_size"+Environment.NewLine);
                 return fps;
             }
             return 0;
         }
         catch (Exception ex)
         {
-            Logger.Info($"[{GetType().Name}]: {ex.Message}");
+            Logger.Error($"[{GetType().Name}]: {ex.Message}"+Environment.NewLine);
             return 0;
         }
     }
@@ -549,14 +662,14 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 string format = _metadataMediaToolkit.VideoData.Format;
-                Logger.Info("[" + GetType().Name + "]: Get _media " + format + " format");
+                Logger.Info("[" + GetType().Name + "]: Get _media " + format + " format"+Environment.NewLine);
                 return format;
             }
             return String.Empty;
         }
         catch (Exception ex)
         {
-            Logger.Info($"[{GetType().Name}]: {ex.Message}");
+            Logger.Error($"[{GetType().Name}]: {ex.Message} "+Environment.NewLine);
             return String.Empty;
         }
     }
@@ -568,14 +681,14 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 string frame_size = _metadataMediaToolkit.VideoData.FrameSize;
-                Logger.Info("[" + GetType().Name + "]: Get _media " + frame_size + " frame_size");
+                Logger.Info("[" + GetType().Name + "]: Get _media " + frame_size + " frame_size"+Environment.NewLine);
                 return frame_size;
             }
             return String.Empty;
         }
         catch (Exception ex)
         {
-            Logger.Info($"[{GetType().Name}]: {ex.Message}");
+            Logger.Error($"[{GetType().Name}]: {ex.Message}");
             return String.Empty;
         }
     }
@@ -587,14 +700,14 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 string format = _metadataMediaToolkit.AudioData.Format;
-                Logger.Info("[" + GetType().Name + "]: Get _media " + format + " audio_format");
+                Logger.Info("[" + GetType().Name + "]: Get _media " + format + " audio_format"+Environment.NewLine);
                 return format;
             }
             return String.Empty;
         }
         catch (Exception ex)
         {
-            Logger.Info($"[{GetType().Name}]: {ex.Message}");
+            Logger.Error($"[{GetType().Name}]: {ex.Message}");
             return String.Empty;
         }
     }
@@ -606,14 +719,14 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 string rate = _metadataMediaToolkit.AudioData.SampleRate;
-                Logger.Info("[" + GetType().Name + "]: Get _media " + rate + " audio_sample_rate");
+                Logger.Info("[" + GetType().Name + "]: Get _media " + rate + " audio_sample_rate" + Environment.NewLine);
                 return rate;
             }
             return String.Empty;
         }
         catch (Exception ex)
         {
-            Logger.Info($"[{GetType().Name}]: {ex.Message}");
+            Logger.Error($"[{GetType().Name}]: {ex.Message}" + Environment.NewLine);
             return String.Empty;
         }
     }
@@ -625,14 +738,14 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 int rate = _metadataMediaToolkit.AudioData.BitRateKbs;
-                Logger.Info($"[{GetType().Name}]: Get _media {rate} audio_bit_rate");
+                Logger.Info($"[{GetType().Name}]: Get _media {rate} audio_bit_rate" + Environment.NewLine);
                 return rate;
             }
             return 0;
         }
         catch (Exception ex)
         {
-            Logger.Info($"[{GetType().Name}]: {ex.Message}");
+            Logger.Error($"[{GetType().Name}]: {ex.Message}" + Environment.NewLine);
             return 0;
         }
     }
@@ -644,14 +757,14 @@ public class MediaItem : UIElement, INotifyPropertyChanged
             if (_metadataMediaToolkit != null)
             {
                 string chanel_output = _metadataMediaToolkit.AudioData.ChannelOutput;
-                Logger.Info("[" + GetType().Name + "]: Get _media " + chanel_output + " audio_channel_output");
+                Logger.Info("[" + GetType().Name + "]: Get _media " + chanel_output + " audio_channel_output" + Environment.NewLine);
                 return chanel_output;
             }
             return String.Empty;
         }
         catch (Exception ex)
         {
-            Logger.Info($"[{GetType().Name}]: {ex.Message}");
+            Logger.Error($"[{GetType().Name}]: {ex.Message}" + Environment.NewLine);
             return String.Empty;
         }
     }
@@ -662,7 +775,7 @@ public class MediaItem : UIElement, INotifyPropertyChanged
     /// <returns>string</returns>
     public override string ToString()
     {
-        return $"BaseString: {Name}, Duration: {Duration}, Format: {Format}";
+        return $"BaseString: {Name}, Duration: {Duration}, Format: {Format}" + Environment.NewLine;
     }
 
     /// <summary>
